@@ -1,0 +1,20 @@
+{
+  "name": "Iron Pulse Home Gym Tracker",
+  "short_name": "IronPulse",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#00f0ff",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192.png?text=IP",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512.png?text=IP",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
