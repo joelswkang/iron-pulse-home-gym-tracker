@@ -1,595 +1,240 @@
 <!DOCTYPE html>
-<html lang="ko" class="dark">
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Iron Pulse - Home Gym Tracker</title>
-<!-- Tailwind CSS CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
-<!-- FontAwesome Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<!-- Google Inter Font -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script>
-tailwind.config = {
-darkMode: 'class',
-theme: {
-extend: {
-fontFamily: { sans: ['Inter', 'sans-serif'] },
-colors: {
-brand: { 500: '#ff2a5f', 600: '#e11d48', 700: '#be123c' },
-neon: { cyan: '#00f2fe', emerald: '#10b981', amber: '#f59e0b', purple: '#a855f7' },
-darkbg: '#070a12',
-cardbg: 'rgba(15, 23, 42, 0.75)',
-inputbg: 'rgba(30, 41, 59, 0.7)'
-}
-}
-}
-}
-</script>
-<style>
-body {
-background: radial-gradient(circle at top center, #111827 0%, #070a12 100%);
-color: #f8fafc;
-user-select: none;
--webkit-user-select: none;
-}
-.glass-card {
-background: rgba(15, 23, 42, 0.85);
-backdrop-filter: blur(16px);
--webkit-backdrop-filter: blur(16px);
-border: 1px solid rgba(255, 255, 255, 0.1);
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iron Pulse Home Gym Tracker</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --surface: #131c2e;
+            --surface-card: #1a253a;
+            --primary: #00f0ff;
+            --secondary: #7000ff;
+            --accent: #ff0055;
+            --text: #f3f4f6;
+            --text-dim: #9ca3af;
+            --success: #10b981;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 80px; }
+        header { background: var(--surface); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; z-index: 100; }
+        h1 { font-size: 1.2rem; color: var(--primary); font-weight: 700; letter-spacing: 0.5px; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .card { background: var(--surface-card); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+        h2 { font-size: 1.1rem; margin-bottom: 15px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 6px; }
+        input, select { width: 100%; background: var(--bg); border: 1px solid rgba(255,255,255,0.15); color: var(--text); padding: 12px; border-radius: 10px; font-size: 1rem; margin-bottom: 15px; }
+        button { width: 100%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        button:active { opacity: 0.8; }
+        .btn-secondary { background: rgba(255,255,255,0.1); margin-top: 10px; }
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); z-index: 100; }
+        .nav-item { background: none; border: none; color: var(--text-dim); font-size: 0.8rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; width: auto; padding: 0; }
+        .nav-item.active { color: var(--primary); }
+        .hidden { display: none !important; }
+        .flex-row { display: flex; gap: 10px; }
+        .badge { background: rgba(0,240,255,0.15); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; display: inline-block; margin-bottom: 10px; }
+    </style>
 </head>
-<body class="font-sans antialiased text-slate-100 min-h-screen flex flex-col pb-20 select-none">
-<!-- HEADER BAR -->
-<header class="bg-darkbg/90 border-b border-slate-800 sticky top-0 z-40 px-4 py-3 flex justify-between items-center shadow-2xl">
-<div class="flex items-center space-x-3">
-<div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-700 via-brand-500 to-neon-purple flex items-center justify-center shadow-lg shadow-brand-500/30">
-<i class="fa-solid fa-dumbbell text-white text-xl"></i>
-</div>
-<div>
-<h1 class="font-black text-xl tracking-tight leading-none bg-gradient-to-r from-white via-slate-200 to-neon-cyan bg-clip-text text-transparent">IRON PULSE</h1>
-<span class="text-[10px] text-slate-400 font-extrabold tracking-widest uppercase">HOME GYM TRACKER</span>
-</div>
-</div>
-<div class="flex items-center space-x-2">
-<button onclick="toggleLanguage()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-black text-xs text-neon-cyan transition">
-<span id="lang-btn-text">EN</span>
-</button>
-<button onclick="exportDataJSON()" title="Export JSON" class="text-xs bg-slate-900 p-2.5 rounded-xl border border-slate-800 text-slate-300">
-<i class="fa-solid fa-download"></i>
-</button>
-</div>
-</header>
-<!-- MAIN APP CONTAINER -->
-<main class="flex-1 max-w-2xl w-full mx-auto p-4 space-y-5">
-<!-- TAB NAVIGATION -->
-<nav class="grid grid-cols-4 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 text-center text-xs font-black shadow-2xl">
-<button id="tab-btn-workout" onclick="switchTab('workout')" class="py-3 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 text-white shadow-lg transition" data-i18n="nav_workout">운동 세션</button>
-<button id="tab-btn-routines" onclick="switchTab('routines')" class="py-3 rounded-xl text-slate-400 hover:text-white transition" data-i18n="nav_routines">루틴 관리</button>
-<button id="tab-btn-inbody" onclick="switchTab('inbody')" class="py-3 rounded-xl text-slate-400 hover:text-white transition" data-i18n="nav_inbody">인바디/분석</button>
-<button id="tab-btn-profile" onclick="switchTab('profile')" class="py-3 rounded-xl text-slate-400 hover:text-white transition" data-i18n="nav_settings">설정/장비</button>
-</nav>
-<!-- TAB 1: WORKOUT SESSION -->
-<section id="tab-workout" class="space-y-4">
-<!-- SETUP CARD -->
-<div id="session-setup-card" class="glass-card p-6 rounded-3xl space-y-5 shadow-2xl">
-<div class="flex justify-between items-center border-b border-slate-800 pb-4">
-<div>
-<h2 class="text-xl font-black text-white flex items-center" data-i18n="title_session">
-<i class="fa-solid fa-bolt-lightning text-brand-500 mr-2.5"></i>오늘의 워크아웃
-</h2>
-<p class="text-xs text-slate-400 font-semibold mt-1" data-i18n="subtitle_session">분할 선택 & 자동 순환 로직</p>
-</div>
-<span id="next-recommended-tag" class="text-[11px] font-black bg-slate-800 text-brand-400 border border-brand-800 px-3 py-1.5 rounded-xl">Next: PUSH</span>
-</div>
-<div class="grid grid-cols-2 gap-3">
-<div>
-<label class="text-xs font-bold text-slate-400 block mb-1.5" data-i18n="lbl_split_type">운동 분할 방식</label>
-<select id="select-split-type" onchange="onSplitTypeChange()" class="w-full bg-slate-900 text-slate-100 text-xs font-black p-3.5 rounded-2xl outline-none border border-slate-700">
-<option value="ppl">3분할 (PPL: Push/Pull/Legs)</option>
-<option value="upper_lower">2분할 (Upper / Lower)</option>
-<option value="bro_split">5분할 (Chest/Back/Shoulder/Legs/Arms)</option>
-<option value="full_body">무분할 (Full Body)</option>
-</select>
-</div>
-<div>
-<label class="text-xs font-bold text-slate-400 block mb-1.5" data-i18n="lbl_today_routine">오늘 수행할 세션</label>
-<select id="select-routine-day" class="w-full bg-slate-900 text-slate-100 text-xs font-black p-3.5 rounded-2xl outline-none border border-slate-700">
-</select>
-</div>
-</div>
-<!-- ERGONOMICS & AUTO PROGRESSION TOGGLES -->
-<div class="space-y-2">
-<div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 flex justify-between items-center">
-<div>
-<div class="text-xs font-extrabold text-slate-200" data-i18n="toggle_auto_progression">이전 기록 기반 자동 중량/횟수 조절</div>
-<div class="text-[10px] text-slate-400" data-i18n="toggle_auto_progression_sub">지난 심박수 & RPE 기반 자동 산출</div>
-</div>
-<input type="checkbox" id="toggle-auto-prog" class="w-5 h-5 accent-brand-500 rounded" checked>
-</div>
-<div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 flex justify-between items-center">
-<div>
-<div class="text-xs font-extrabold text-slate-200" data-i18n="toggle_ergo">홈짐 동선 최적화 (기구별 배치)</div>
-<div class="text-[10px] text-slate-400" data-i18n="toggle_ergo_sub">같은 기구 종목끼리 연속 진행</div>
-</div>
-<input type="checkbox" id="toggle-ergo-group" class="w-5 h-5 accent-neon-cyan rounded" checked>
-</div>
-</div>
-<button onclick="startWorkoutSession()" class="w-full bg-gradient-to-r from-brand-600 via-brand-500 to-neon-purple font-black py-4 rounded-2xl shadow-xl transition active:scale-95 text-base text-white tracking-wide" data-i18n="btn_start_session">
-<i class="fa-solid fa-play mr-2"></i> 워크아웃 시작하기
-</button>
-</div>
-<!-- ACTIVE WORKOUT FLOW -->
-<div id="active-session-container" class="hidden space-y-4">
-<!-- STAGE PROGRESS BAR -->
-<div class="glass-card p-3 rounded-2xl flex justify-between items-center text-[11px] font-black text-slate-400">
-<span id="stage-warmup-indicator" class="px-2 py-1 rounded-xl">1. Warmup</span>
-<i class="fa-solid fa-chevron-right text-[9px]"></i>
-<span id="stage-main-indicator" class="px-2 py-1 rounded-xl">2. Main</span>
-<i class="fa-solid fa-chevron-right text-[9px]"></i>
-<span id="stage-core-indicator" class="px-2 py-1 rounded-xl">3. Core</span>
-<i class="fa-solid fa-chevron-right text-[9px]"></i>
-<span id="stage-cardio-indicator" class="px-2 py-1 rounded-xl">4. Cardio</span>
-<i class="fa-solid fa-chevron-right text-[9px]"></i>
-<span id="stage-cooldown-indicator" class="px-2 py-1 rounded-xl">5. Cooldown</span>
-</div>
-<!-- STAGE 1: WARMUP -->
-<div id="stage-box-warmup" class="glass-card p-5 rounded-3xl space-y-4">
-<h3 class="font-black text-amber-400 text-base flex items-center">
-<i class="fa-solid fa-person-running mr-2"></i>1단계: 유산소 웜업 & 동적 스트레칭
-</h3>
-<div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3">
-<div class="text-xs font-bold text-slate-200">유산소 기구 웜업 선택</div>
-<div class="grid grid-cols-2 gap-2 text-xs">
-<select id="warmup-cardio-gear" class="bg-slate-950 p-3 rounded-xl border border-slate-700 font-bold text-slate-100">
-<option value="Treadmill">트레드밀 (Treadmill)</option>
-<option value="Elliptical">일립티컬 (Elliptical)</option>
-</select>
-<input type="number" id="warmup-cardio-min" value="5" placeholder="수행 시간(분)" class="bg-slate-950 p-3 rounded-xl border border-slate-700 font-bold text-center text-slate-100">
-</div>
-<div>
-<label class="text-[11px] text-slate-400 font-bold block mb-1">웜업 후 심박수 (BPM)</label>
-<input type="number" id="warmup-end-hr" value="110" class="w-full bg-slate-950 p-3 rounded-xl border border-slate-700 font-bold text-center text-neon-cyan">
-</div>
-</div>
-<div class="space-y-2">
-<div class="font-extrabold text-slate-300 text-xs">맞춤 동적 스트레칭 (Dynamic Stretch):</div>
-<div id="dynamic-stretch-list" class="space-y-2"></div>
-</div>
-<button onclick="nextStage('main')" class="w-full bg-slate-800 font-black py-4 rounded-2xl border border-slate-700 text-sm text-slate-100">
-본 운동으로 이동 <i class="fa-solid fa-arrow-right ml-1"></i>
-</button>
-</div>
-<!-- STAGE 2: MAIN WORKOUT (STEP-BY-STEP SINGLE EXERCISE FOCUS) -->
-<div id="stage-box-main" class="hidden space-y-4">
-<!-- REST TIMER BAR -->
-<div id="rest-timer-bar" class="glass-card border-2 border-brand-500 p-4 rounded-2xl flex justify-between items-center hidden">
-<div class="flex items-center space-x-3">
-<i class="fa-solid fa-hourglass-half text-brand-500 text-2xl animate-spin"></i>
-<div>
-<div class="text-[10px] font-black text-slate-400 uppercase">Rest Timer</div>
-<div id="timer-display" class="text-3xl font-black text-brand-500">01:30</div>
-</div>
-</div>
-<div class="flex items-center space-x-1.5">
-<button onclick="adjustTimer(-15)" class="px-3 py-2 bg-slate-800 text-xs font-bold rounded-xl border border-slate-700">-15s</button>
-<button onclick="adjustTimer(15)" class="px-3 py-2 bg-slate-800 text-xs font-bold rounded-xl border border-slate-700">+15s</button>
-<button onclick="skipTimer()" class="px-3 py-2 bg-brand-600 text-xs font-black rounded-xl text-white">Skip</button>
-</div>
-</div>
-<!-- SINGLE FOCUSED EXERCISE CARD -->
-<div id="single-exercise-focus-card"></div>
-<div class="flex justify-between items-center gap-2">
-<button onclick="prevExerciseStep()" class="flex-1 bg-slate-800 py-3.5 rounded-2xl border border-slate-700 font-bold text-xs text-slate-300">
-<i class="fa-solid fa-chevron-left mr-1"></i> 이전 운동
-</button>
-<button onclick="addNewExerciseToCurrentSession()" class="px-4 py-3.5 bg-slate-900 border border-slate-700 text-neon-cyan font-black text-xs rounded-2xl">
-+ 종목 추가
-</button>
-<button onclick="nextExerciseStep()" class="flex-1 bg-brand-600 py-3.5 rounded-2xl font-black text-xs text-white">
-다음 운동 <i class="fa-solid fa-chevron-right ml-1"></i>
-</button>
-</div>
-<button onclick="nextStage('core')" class="w-full bg-slate-800 font-black py-4 rounded-2xl border border-slate-700 text-sm text-slate-100">
-코어 세션으로 이동 <i class="fa-solid fa-arrow-right ml-1"></i>
-</button>
-</div>
-<!-- STAGE 3: CORE -->
-<div id="stage-box-core" class="hidden glass-card p-5 rounded-3xl space-y-4">
-<h3 class="font-black text-cyan-400 text-base flex items-center">
-<i class="fa-solid fa-shield-halved mr-2"></i>3단계: 코어 4종 (허리 부담 최소화)
-</h3>
-<div class="space-y-2.5 text-xs">
-<div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 flex justify-between items-center">
-<div>
-<div class="font-black text-slate-100">1. 플랭크 (Plank Hold)</div>
-<div class="text-[10px] text-slate-400">척추 중립 & 코어 전체 압착</div>
-</div>
-<span class="text-xs bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 font-black text-cyan-300">3 세트 x 45 초</span>
-</div>
-<div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 flex justify-between items-center">
-<div>
-<div class="font-black text-slate-100">2. 데드버그 (Deadbug)</div>
-<div class="text-[10px] text-slate-400">요통 완화 & 안정한 복횡근 수축</div>
-</div>
-<span class="text-xs bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 font-black text-cyan-300">3 세트 x 12 회</span>
-</div>
-<div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 flex justify-between items-center">
-<div>
-<div class="font-black text-slate-100">3. 버드독 (Bird-Dog)</div>
-<div class="text-[10px] text-slate-400">요둔부 안정화 & 후면 사슬 교차 연동</div>
-</div>
-<span class="text-xs bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 font-black text-cyan-300">3 세트 x 10 회</span>
-</div>
-<div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 flex justify-between items-center">
-<div>
-<div class="font-black text-slate-100">4. 팔로프 프레스 (Pallof Press)</div>
-<div class="text-[10px] text-slate-400">케이블/밴드 안티 로테이션 측면 코어</div>
-</div>
-<span class="text-xs bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 font-black text-cyan-300">3 세트 x 12 회</span>
-</div>
-</div>
-<button onclick="nextStage('cardio')" class="w-full bg-slate-800 font-black py-4 rounded-2xl border border-slate-700 text-sm text-slate-100">
-본 유산소로 이동 <i class="fa-solid fa-arrow-right ml-1"></i>
-</button>
-</div>
-<!-- STAGE 4: MAIN CARDIO -->
-<div id="stage-box-cardio" class="hidden glass-card p-5 rounded-3xl space-y-4">
-<h3 class="font-black text-emerald-400 text-base flex items-center">
-<i class="fa-solid fa-person-biking mr-2"></i>4단계: 본 유산소 세션
-</h3>
-<div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3 text-xs">
-<div class="grid grid-cols-2 gap-2">
-<div>
-<label class="text-slate-400 font-bold block mb-1">유산소 종목</label>
-<select id="main-cardio-type" class="w-full bg-slate-950 p-3 rounded-xl border border-slate-700 font-bold text-slate-100">
-<option value="Treadmill">트레드밀</option>
-<option value="Elliptical">일립티컬</option>
-</select>
-</div>
-<div>
-<label class="text-slate-400 font-bold block mb-1">목표 시간(분)</label>
-<input type="number" id="main-cardio-duration" value="30" class="w-full bg-slate-950 p-3 rounded-xl border border-slate-700 font-bold text-center text-slate-100">
-</div>
-</div>
-<div class="grid grid-cols-2 gap-2">
-<div>
-<label class="text-slate-400 font-bold block mb-1">속도 (km/h)</label>
-<input type="number" step="0.5" id="main-cardio-speed" value="7.5" class="w-full bg-slate-950 p-3 rounded-xl border border-slate-700 font-bold text-center text-slate-100">
-</div>
-<div>
-<label class="text-slate-400 font-bold block mb-1">경사도 / 저항</label>
-<input type="number" id="main-cardio-incline" value="5" class="w-full bg-slate-950 p-3 rounded-xl border border-slate-700 font-bold text-center text-slate-100">
-</div>
-</div>
-</div>
-<button onclick="nextStage('cooldown')" class="w-full bg-slate-800 font-black py-4 rounded-2xl border border-slate-700 text-sm text-slate-100">
-쿨다운으로 이동 <i class="fa-solid fa-arrow-right ml-1"></i>
-</button>
-</div>
-<!-- STAGE 5: COOLDOWN & STRETCHING -->
-<div id="stage-box-cooldown" class="hidden glass-card p-5 rounded-3xl space-y-4">
-<div class="flex justify-between items-center border-b border-slate-800 pb-3">
-<h3 class="font-black text-purple-400 text-base flex items-center">
-<i class="fa-solid fa-spa mr-2"></i>5단계: 쿨다운 정적 스트레칭
-</h3>
-</div>
-<div id="cooldown-content-area" class="space-y-3"></div>
-<button onclick="finishCompleteWorkout()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 font-black py-4 rounded-2xl text-base shadow-xl text-white">
-<i class="fa-solid fa-check-double mr-2"></i> 오늘 운동 기록 저장 & 완료
-</button>
-</div>
-</div>
-</section>
-<!-- TAB 2: ROUTINES & BLACKLIST MANAGEMENT -->
-<section id="tab-routines" class="hidden space-y-4">
-<div class="glass-card p-5 rounded-3xl border border-slate-800 space-y-4">
-<h2 class="font-black text-base text-white">운동 루틴 & 블랙리스트 관리</h2>
-<div id="routine-list-display" class="space-y-3"></div>
-<div class="border-t border-slate-800 pt-3">
-<h3 class="font-extrabold text-xs text-brand-400 mb-2">블랙리스트 (제외된 운동 종목)</h3>
-<div id="blacklist-items-container" class="space-y-2"></div>
-</div>
-</div>
-</section>
-<!-- TAB 3: INBODY & ANALYTICS -->
-<section id="tab-inbody" class="hidden space-y-4">
-<div class="glass-card p-5 rounded-3xl border border-slate-800 space-y-4">
-<div class="flex justify-between items-center">
-<h2 class="font-black text-base text-white flex items-center">
-<i class="fa-solid fa-weight-scale text-neon-cyan mr-2"></i>인바디(InBody) 다이어리
-</h2>
-</div>
-<div class="grid grid-cols-3 gap-2 text-xs">
-<div>
-<label class="text-slate-400 font-bold block mb-1">체중 (kg)</label>
-<input type="number" step="0.1" id="inbody-weight" class="w-full bg-slate-900 p-2.5 rounded-xl border border-slate-700 font-bold text-center text-slate-100">
-</div>
-<div>
-<label class="text-slate-400 font-bold block mb-1">골격근량 (kg)</label>
-<input type="number" step="0.1" id="inbody-smm" class="w-full bg-slate-900 p-2.5 rounded-xl border border-slate-700 font-bold text-center text-slate-100">
-</div>
-<div>
-<label class="text-slate-400 font-bold block mb-1">체지방률 (%)</label>
-<input type="number" step="0.1" id="inbody-pbf" class="w-full bg-slate-900 p-2.5 rounded-xl border border-slate-700 font-bold text-center text-slate-100">
-</div>
-</div>
-<button onclick="saveInBodyRecord()" class="w-full bg-neon-cyan hover:opacity-95 font-black py-3 rounded-xl text-xs text-slate-950">
-인바디 기록 추가
-</button>
-</div>
-<div class="glass-card p-5 rounded-3xl border border-slate-800 space-y-3">
-<h3 class="font-black text-sm text-white">인바디 변화 추이</h3>
-<div id="inbody-history-list" class="space-y-2 text-xs"></div>
-</div>
-</section>
-<!-- TAB 4: PROFILE & HOME GYM EQUIPMENT CUSTOMIZATION -->
-<section id="tab-profile" class="hidden space-y-4">
-<div class="glass-card p-5 rounded-3xl border border-slate-800 space-y-4">
-<h2 class="font-black text-base text-white flex items-center">
-<i class="fa-solid fa-sliders text-brand-500 mr-2"></i>프로필 & 장비 커스텀
-</h2>
-<div class="grid grid-cols-2 gap-3 text-xs">
-<div>
-<label class="text-slate-400 font-bold block mb-1">이름</label>
-<input type="text" id="prof-name" class="w-full bg-slate-900 text-slate-100 p-3 rounded-xl border border-slate-700 font-bold">
-</div>
-<div>
-<label class="text-slate-400 font-bold block mb-1">생년월일 (YYYY-MM-DD)</label>
-<input type="date" id="prof-birthdate" class="w-full bg-slate-900 text-slate-100 p-3 rounded-xl border border-slate-700 font-bold">
-</div>
-</div>
-<div class="border-t border-slate-800 pt-3 space-y-2 text-xs">
-<label class="font-black text-slate-200 block">조절식 덤벨 무게 목록 (kg, 쉼표 구분)</label>
-<input type="text" id="prof-db-increments" value="2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20" class="w-full bg-slate-900 text-slate-100 p-3 rounded-xl border border-slate-700 font-bold text-neon-cyan">
-</div>
-<button onclick="saveUserProfile()" class="w-full bg-brand-600 hover:bg-brand-500 font-black py-3.5 rounded-2xl shadow-lg text-white text-sm">
-설정값 저장
-</button>
-</div>
-</section>
-</main>
-<!-- RPE HELP MODAL -->
-<div id="modal-rpe-help" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-<div class="glass-card border border-slate-700 rounded-3xl p-5 max-w-xs w-full space-y-3">
-<div class="flex justify-between items-center border-b border-slate-800 pb-2">
-<h3 class="font-black text-sm text-white">RPE (자각적 운동 강도) 란?</h3>
-<button onclick="closeRpeHelp()" class="text-slate-400 text-lg font-bold">×</button>
-</div>
-<ul class="text-xs space-y-2 text-slate-300">
-<li><strong class="text-emerald-400">RPE 1-4:</strong> 매우 가벼움 (여유 5회 이상)</li>
-<li><strong class="text-neon-cyan">RPE 5-6:</strong> 중간 강도 (여유 3-4회)</li>
-<li><strong class="text-amber-400">RPE 7-8:</strong> 적정 본운동 강도 (여유 1-2회)</li>
-<li><strong class="text-brand-500">RPE 9-10:</strong> 한계점 및 실패 지점 (여유 0회)</li>
-</ul>
-</div>
-</div>
-<!-- JAVASCRIPT ENGINE -->
-<script>
-let activeWorkoutState = null;
-let restTimerInterval = null;
-let restTimerSeconds = 0;
-let currentExerciseStepIdx = 0;
-let currentLang = 'ko';
-const I18N = {
-ko: {
-nav_workout: '운동 세션', nav_routines: '루틴 관리', nav_inbody: '인바디/분석', nav_settings: '설정/장비',
-title_session: '오늘의 워크아웃', subtitle_session: '분할 선택 & 자동 순환 로직',
-lbl_split_type: '운동 분할 방식', lbl_today_routine: '오늘 수행할 세션',
-toggle_auto_progression: '이전 기록 기반 자동 중량/횟수 조절', toggle_auto_progression_sub: '지난 심박수 & RPE 기반 자동 산출',
-toggle_ergo: '홈짐 동선 최적화 (기구별 배치)', toggle_ergo_sub: '같은 기구 종목끼리 연속 진행',
-btn_start_session: '워크아웃 시작하기'
-},
-en: {
-nav_workout: 'Workout', nav_routines: 'Routines', nav_inbody: 'InBody/Analytics', nav_settings: 'Settings',
-title_session: "Today's Workout", subtitle_session: 'Split Selection & Auto Rotation',
-lbl_split_type: 'Workout Split', lbl_today_routine: 'Today Session',
-toggle_auto_progression: 'Auto Weight/Rep Progression', toggle_auto_progression_sub: 'Based on previous HR & RPE logs',
-toggle_ergo: 'Home Gym Path Optimization', toggle_ergo_sub: 'Group consecutive exercises by gear',
-btn_start_session: 'Start Workout Session'
-}
-};
-const ROUTINE_DATABASES = {
-ppl: {
-push: [
-{ id: 'smith_bench', name: '스미스 머신 벤치프레스', equip: 'smith', primary: 'Chest', sets: 4, reps: 10 },
-{ id: 'db_incline_press', name: '덤벨 인클라인 프레스', equip: 'dumbbell', primary: 'Upper Chest', sets: 3, reps: 12 },
-{ id: 'cable_tricep_pushdown', name: '케이블 트라이셉 푸시다운', equip: 'cable', primary: 'Triceps', sets: 4, reps: 12 }
-],
-pull: [
-{ id: 'lat_pulldown', name: '상단 케이블 렛풀다운', equip: 'cable', primary: 'Lats', sets: 4, reps: 10 },
-{ id: 'smith_row', name: '스미스 머신 로우', equip: 'smith', primary: 'Upper Back', sets: 4, reps: 10 },
-{ id: 'db_bicep_curl', name: '덤벨 바이셉 컬', equip: 'dumbbell', primary: 'Biceps', sets: 4, reps: 12 }
-],
-legs: [
-{ id: 'smith_squat', name: '스미스 머신 스쿼트', equip: 'smith', primary: 'Quads', sets: 4, reps: 10 },
-{ id: 'db_lunge', name: '덤벨 워킹 런지', equip: 'dumbbell', primary: 'Quads', sets: 3, reps: 12 },
-{ id: 'db_romanian_deadlift', name: '덤벨 루마니안 데드리프트', equip: 'dumbbell', primary: 'Hamstrings', sets: 4, reps: 10 }
-]
-}
-};
-let userProfile = JSON.parse(localStorage.getItem('iron_pulse_profile') || 'null') || {
-name: '사용자', birthdate: '1995-05-15', dbIncrements: '2.5, 5, 7.5, 10, 12.5, 15', blacklist: []
-};
-let inbodyHistory = JSON.parse(localStorage.getItem('iron_pulse_inbody') || '[]');
-function toggleLanguage() {
-currentLang = currentLang === 'ko' ? 'en' : 'ko';
-document.getElementById('lang-btn-text').innerText = currentLang.toUpperCase();
-document.querySelectorAll('[data-i18n]').forEach(el => {
-const key = el.getAttribute('data-i18n');
-if (I18N[currentLang][key]) el.innerText = I18N[currentLang][key];
-});
-}
-function switchTab(tabName) {
-['workout', 'routines', 'inbody', 'profile'].forEach(t => {
-document.getElementById(⁠tab-${t}⁠).classList.add('hidden');
-document.getElementById(⁠tab-btn-${t}⁠).className = 'py-3 rounded-xl text-slate-400 hover:text-white transition';
-});
-document.getElementById(⁠tab-${tabName}⁠).classList.remove('hidden');
-document.getElementById(⁠tab-btn-${tabName}⁠).className = 'py-3 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 text-white shadow-lg transition';
-if (tabName === 'inbody') renderInBodyHistory();
-if (tabName === 'routines') renderRoutineList();
-}
-function onSplitTypeChange() {
-const daySelect = document.getElementById('select-routine-day');
-daySelect.innerHTML = '';
-['push', 'pull', 'legs'].forEach(opt => {
-const el = document.createElement('option');
-el.value = opt; el.innerText = opt.toUpperCase();
-daySelect.appendChild(el);
-});
-}
-function startWorkoutSession() {
-const dayKey = document.getElementById('select-routine-day').value;
-let exPool = JSON.parse(JSON.stringify(ROUTINE_DATABASES.ppl[dayKey] || ROUTINE_DATABASES.ppl.push));
-exPool = exPool.filter(ex => !userProfile.blacklist.includes(ex.id));
-activeWorkoutState = { dayKey, stage: 'warmup', exercises: exPool };
-currentExerciseStepIdx = 0;
-document.getElementById('session-setup-card').classList.add('hidden');
-document.getElementById('active-session-container').classList.remove('hidden');
-renderWarmupStage();
-updateStageIndicators('warmup');
-}
-function updateStageIndicators(stage) {
-['warmup', 'main', 'core', 'cardio', 'cooldown'].forEach(s => {
-const el = document.getElementById(⁠stage-${s}-indicator⁠);
-if (s === stage) el.className = 'px-2 py-1 rounded-xl bg-brand-600 text-white font-black';
-else el.className = 'px-2 py-1 rounded-xl text-slate-500';
-});
-}
-function nextStage(targetStage) {
-['warmup', 'main', 'core', 'cardio', 'cooldown'].forEach(s => {
-document.getElementById(⁠stage-box-${s}⁠).classList.add('hidden');
-});
-document.getElementById(⁠stage-box-${targetStage}⁠).classList.remove('hidden');
-updateStageIndicators(targetStage);
-if (targetStage === 'main') renderSingleFocusedExercise();
-if (targetStage === 'cooldown') renderCooldownStage();
-}
-function renderWarmupStage() {
-document.getElementById('dynamic-stretch-list').innerHTML = ⁠<div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs text-slate-200">1. 회전근개 가동성 운동 15회</div> <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs text-slate-200">2. 흉추 & 고관절 동적 이완 10회</div>⁠;
-}
-function renderSingleFocusedExercise() {
-const container = document.getElementById('single-exercise-focus-card');
-const ex = activeWorkoutState.exercises[currentExerciseStepIdx];
-if (!ex) return;
-if (!ex.setsData) {
-ex.setsData = Array.from({ length: ex.sets }, () => ({ weight: 30, reps: ex.reps, rpe: 7, hr: 120, completed: false }));
-}
-container.innerHTML = `
-<div class="glass-card p-5 rounded-3xl space-y-4">
-<div class="flex justify-between items-start border-b border-slate-800 pb-3">
-<div>
-<div class="text-xs text-brand-400 font-extrabold uppercase">Exercise ${currentExerciseStepIdx + 1} of {activeWorkoutState.exercises.length}</div>
-<h3 class="font-black text-lg text-white">{ex.name}</h3>
-<div class="text-xs text-slate-400">Target: {ex.primary} ({ex.equip})</div>
-</div>
-</div>
-<div class="space-y-2">
-${ex.setsData.map((s, sIdx) => ⁠<div class="grid grid-cols-6 gap-1.5 items-center bg-slate-950 p-2 rounded-2xl text-[11px] border ${s.completed ? 'border-emerald-500' : 'border-slate-800'}"> <div class="font-extrabold text-slate-400 text-center">${sIdx + 1} 세트</div> <div class="flex items-center space-x-1"> <button onclick="modSetVal(${sIdx}, 'weight', -2.5)" class="px-1.5 py-1 bg-slate-800 rounded font-bold">-</button> <span class="font-bold text-slate-100">${s.weight}k</span> <button onclick="modSetVal(${sIdx}, 'weight', 2.5)" class="px-1.5 py-1 bg-slate-800 rounded font-bold">+</button> </div> <div class="flex items-center space-x-1"> <button onclick="modSetVal(${sIdx}, 'reps', -1)" class="px-1.5 py-1 bg-slate-800 rounded font-bold">-</button> <span class="font-bold text-slate-100">${s.reps}회</span> <button onclick="modSetVal(${sIdx}, 'reps', 1)" class="px-1.5 py-1 bg-slate-800 rounded font-bold">+</button> </div> <div class="flex items-center space-x-1"> <span class="text-brand-400 font-bold">RPE</span> <input type="number" value="${s.rpe}" onchange="updateSetVal(${sIdx}, 'rpe', this.value)" class="w-8 bg-slate-900 text-center font-bold rounded"> </div> <div> <input type="number" value="${s.hr}" onchange="updateSetVal(${sIdx}, 'hr', this.value)" class="w-full bg-slate-900 text-center font-bold rounded py-1"> </div> <button onclick="completeSingleSet(${sIdx})" class="w-full py-2 ${s.completed ? 'bg-emerald-600' : 'bg-brand-600'} rounded-xl font-bold text-white"> ${s.completed ? '✓' : '완료'} </button> </div>⁠).join('')}
-</div>
-</div>
-`;
-}
-function modSetVal(sIdx, field, delta) {
-const ex = activeWorkoutState.exercises[currentExerciseStepIdx];
-ex.setsData[sIdx][field] = Math.max(0, ex.setsData[sIdx][field] + delta);
-renderSingleFocusedExercise();
-}
-function updateSetVal(sIdx, field, val) {
-const ex = activeWorkoutState.exercises[currentExerciseStepIdx];
-ex.setsData[sIdx][field] = parseFloat(val) || 0;
-}
-function completeSingleSet(sIdx) {
-const ex = activeWorkoutState.exercises[currentExerciseStepIdx];
-ex.setsData[sIdx].completed = true;
-renderSingleFocusedExercise();
-startRestTimer(90);
-}
-function prevExerciseStep() {
-if (currentExerciseStepIdx > 0) {
-currentExerciseStepIdx--;
-renderSingleFocusedExercise();
-}
-}
-function nextExerciseStep() {
-if (currentExerciseStepIdx < activeWorkoutState.exercises.length - 1) {
-currentExerciseStepIdx++;
-renderSingleFocusedExercise();
-}
-}
-function addNewExerciseToCurrentSession() {
-activeWorkoutState.exercises.push({
-id: 'custom_' + Date.now(), name: '추가 커스텀 운동', equip: 'dumbbell', primary: 'General', sets: 3, reps: 10
-});
-currentExerciseStepIdx = activeWorkoutState.exercises.length - 1;
-renderSingleFocusedExercise();
-}
-function startRestTimer(seconds) {
-clearInterval(restTimerInterval);
-restTimerSeconds = seconds;
-document.getElementById('rest-timer-bar').classList.remove('hidden');
-restTimerInterval = setInterval(() => {
-restTimerSeconds--;
-const m = Math.floor(restTimerSeconds / 60).toString().padStart(2, '0');
-const s = (restTimerSeconds % 60).toString().padStart(2, '0');
-document.getElementById('timer-display').innerText = ⁠${m}:${s}⁠;
-if (restTimerSeconds <= 0) {
-clearInterval(restTimerInterval);
-document.getElementById('rest-timer-bar').classList.add('hidden');
-}
-}, 1000);
-}
-function adjustTimer(sec) { restTimerSeconds = Math.max(0, restTimerSeconds + sec); }
-function skipTimer() { clearInterval(restTimerInterval); document.getElementById('rest-timer-bar').classList.add('hidden'); }
-function renderCooldownStage() {
-document.getElementById('cooldown-content-area').innerHTML = ⁠<div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 text-xs text-slate-200">1. 가슴 & 전면 어깨 정적 신전 (30초)</div> <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 text-xs text-slate-200">2. 광배근 & 측면 스트레칭 (30초)</div> <div class="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 text-xs text-slate-200">3. 햄스트링 & 대퇴사두근 스트레칭 (40초)</div>⁠;
-}
-function finishCompleteWorkout() {
-alert("오늘의 운동이 완료되었습니다!");
-location.reload();
-}
-function openRpeHelp() { document.getElementById('modal-rpe-help').classList.remove('hidden'); }
-function closeRpeHelp() { document.getElementById('modal-rpe-help').classList.add('hidden'); }
-function saveUserProfile() {
-userProfile.name = document.getElementById('prof-name').value;
-userProfile.birthdate = document.getElementById('prof-birthdate').value;
-userProfile.dbIncrements = document.getElementById('prof-db-increments').value;
-localStorage.setItem('iron_pulse_profile', JSON.stringify(userProfile));
-alert("설정이 저장되었습니다.");
-}
-function renderRoutineList() {
-document.getElementById('routine-list-display').innerHTML = ⁠<div class="text-xs text-slate-400 p-3 bg-slate-900 rounded-xl">루틴 관리가 정상 설정되어 있습니다.</div>⁠;
-}
-function saveInBodyRecord() {
-const w = parseFloat(document.getElementById('inbody-weight').value) || 0;
-const smm = parseFloat(document.getElementById('inbody-smm').value) || 0;
-const pbf = parseFloat(document.getElementById('inbody-pbf').value) || 0;
-inbodyHistory.push({ date: new Date().toLocaleDateString(), weight: w, smm, pbf });
-localStorage.setItem('iron_pulse_inbody', JSON.stringify(inbodyHistory));
-renderInBodyHistory();
-}
-function renderInBodyHistory() {
-const list = document.getElementById('inbody-history-list');
-list.innerHTML = inbodyHistory.map(h => ⁠<div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex justify-between"> <span>${h.date}</span> <span>체중: ${h.weight}kg | 근육: ${h.smm}kg | 지방: ${h.pbf}%</span> </div>⁠).join('') || '<div class="text-slate-500">기록이 없습니다.</div>';
-}
-function exportDataJSON() {
-const blob = new Blob([JSON.stringify({ profile: userProfile, inbody: inbodyHistory })], { type: 'application/json' });
-const a = document.createElement('a');
-a.href = URL.createObjectURL(blob);
-a.download = 'iron_pulse_backup.json';
-a.click();
-}
-window.onload = () => {
-onSplitTypeChange();
-if (userProfile) {
-document.getElementById('prof-name').value = userProfile.name || '';
-document.getElementById('prof-birthdate').value = userProfile.birthdate || '';
-}
-};
-</script>
+<body>
+
+    <header>
+        <h1 id="app-title">⚡ IRON PULSE HOME GYM</h1>
+        <button id="lang-btn" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="toggleLang()">KR / EN</button>
+    </header>
+
+    <div class="container">
+        <!-- 1. SETUP / HOME VIEW -->
+        <div id="view-setup" class="view">
+            <div class="card">
+                <h2>👤 사용자 및 장비 세팅</h2>
+                <label id="lbl-name">이름</label>
+                <input type="text" id="set-name" value="홈짐 마스터">
+                
+                <label id="lbl-birth">생년월일</label>
+                <input type="date" id="set-birth" value="1995-01-01">
+
+                <label id="lbl-split">운동 분할 선택</label>
+                <select id="set-split">
+                    <option value="ppl">PPL (Push / Pull / Legs) - 격주/교대 A/B</option>
+                    <option value="upper_lower">상체 / 하체 (2분할)</option>
+                    <option value="bro">5분할 (Bro Split)</option>
+                    <option value="fullbody">무분할 (Full Body)</option>
+                </select>
+
+                <label>조절식 덤벨 보유 무게 목록 (쉼표로 구분)</label>
+                <input type="text" id="set-dumbbells" value="2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25">
+
+                <label>케이블 구성</label>
+                <select id="set-cable">
+                    <option value="dual">듀얼 케이블 (상/하단 고정 2개)</option>
+                    <option value="single">싱글 케이블 (상/하단 고정 1개)</option>
+                </select>
+
+                <button onclick="saveSetup()">설정 저장 및 운동 시작 🚀</button>
+            </div>
+        </div>
+
+        <!-- 2. WORKOUT SESSION VIEW -->
+        <div id="view-workout" class="view hidden">
+            <div class="card">
+                <span class="badge" id="current-split-badge">PUSH SESSION (A 세트)</span>
+                <h2 id="wo-title">1단계: 유산소 웜업</h2>
+                
+                <div id="step-warmup">
+                    <label>유산소 기구 선택</label>
+                    <select id="wu-gear">
+                        <option value="treadmill">트레드밀 (Treadmill)</option>
+                        <option value="elliptical">일립티컬 (Elliptical)</option>
+                    </select>
+                    <label>진행 시간 (분)</label>
+                    <input type="number" id="wu-time" value="10">
+                    <label>도달 심박수 (BPM)</label>
+                    <input type="number" id="wu-hr" value="130">
+                    <button onclick="nextStep(1)">웜업 완료 및 본운동 진입</button>
+                </div>
+
+                <div id="step-main" class="hidden">
+                    <div id="exercise-card">
+                        <h3 id="ex-name" style="color:var(--primary); margin-bottom:10px;">스미스 머신 벤치 프레스</h3>
+                        <p id="ex-target" style="font-size:0.85rem; color:var(--text-dim); margin-bottom:15px;">타겟: 대흉근 / 삼두근</p>
+                        
+                        <div class="flex-row">
+                            <div style="flex:1">
+                                <label>중량 (kg)</label>
+                                <input type="number" id="ex-weight" value="60">
+                            </div>
+                            <div style="flex:1">
+                                <label>횟수 (Reps)</label>
+                                <input type="number" id="ex-reps" value="10">
+                            </div>
+                        </div>
+
+                        <div class="flex-row">
+                            <div style="flex:1">
+                                <label>RPE (1~10 강도)</label>
+                                <input type="number" id="ex-rpe" min="1" max="10" value="8">
+                            </div>
+                            <div style="flex:1">
+                                <label>심박수 (BPM)</label>
+                                <input type="number" id="ex-hr" value="150">
+                            </div>
+                        </div>
+
+                        <button onclick="completeSet()">세트 완료 및 휴식 시작 ⏱️</button>
+                        <button class="btn-secondary" onclick="nextExercise()">다음 운동으로 교체/넘기기</button>
+                    </div>
+                </div>
+
+                <div id="step-rest" class="hidden" style="text-align: center; padding: 20px;">
+                    <h3 style="color: var(--success); margin-bottom: 10px;">휴식 중... ☕</h3>
+                    <h1 id="timer-display" style="font-size: 3rem; margin-bottom: 20px;">60</h1>
+                    <button onclick="skipRest()">휴식 건너뛰기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. ANALYTICS & INBODY VIEW -->
+        <div id="view-analytics" class="view hidden">
+            <div class="card">
+                <h2>📊 근육 밸런스 & 인바디 분석</h2>
+                <label>체중 (kg)</label>
+                <input type="number" id="ib-weight" value="75.0" step="0.1">
+                <label>골격근량 (kg)</label>
+                <input type="number" id="ib-muscle" value="38.5" step="0.1">
+                <label>체지방률 (%)</label>
+                <input type="number" id="ib-fat" value="15.2" step="0.1">
+                <button onclick="saveInBody()">인바디 기록 저장</button>
+            </div>
+            <div class="card">
+                <h2>💡 홈짐 AI 피드백</h2>
+                <p style="font-size: 0.9rem; color: var(--text-dim); line-height: 1.5;">
+                    현재 상체(푸시) 세션 볼륨이 하체에 비해 15% 높습니다. 다음 Pull 세트에서 후면 어깨 및 등 운동을 강화하는 것을 추천합니다.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="nav-bar">
+        <button class="nav-item active" onclick="switchTab('setup')">
+            <span>⚙️</span> 설정
+        </button>
+        <button class="nav-item" onclick="switchTab('workout')">
+            <span>🔥</span> 운동
+        </button>
+        <button class="nav-item" onclick="switchTab('analytics')">
+            <span>📈</span> 분석/인바디
+        </button>
+    </nav>
+
+    <script>
+        let currentLang = 'KR';
+        let workoutState = { step: 'warmup', setIdx: 0 };
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            if(tabId === 'setup') {
+                document.getElementById('view-setup').classList.remove('hidden');
+                event.currentTarget.classList.add('active');
+            } else if(tabId === 'workout') {
+                document.getElementById('view-workout').classList.remove('hidden');
+                event.currentTarget.classList.add('active');
+            } else if(tabId === 'analytics') {
+                document.getElementById('view-analytics').classList.remove('hidden');
+                event.currentTarget.classList.add('active');
+            }
+        }
+
+        function saveSetup() {
+            alert('설정이 저장되었습니다! 운동 탭으로 이동합니다.');
+            switchTab('workout');
+        }
+
+        function nextStep(stage) {
+            if(stage === 1) {
+                document.getElementById('step-warmup').classList.add('hidden');
+                document.getElementById('step-main').classList.remove('hidden');
+                document.getElementById('wo-title').innerText = "2단계: 본 운동 (Push A)";
+            }
+        }
+
+        function completeSet() {
+            document.getElementById('step-main').classList.add('hidden');
+            document.getElementById('step-rest').classList.remove('hidden');
+            let timeLeft = 60;
+            const timerEl = document.getElementById('timer-display');
+            
+            const timer = setInterval(() => {
+                timeLeft--;
+                timerEl.innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(timer);
+                    skipRest();
+                }
+            }, 1000);
+        }
+
+        function skipRest() {
+            document.getElementById('step-rest').classList.add('hidden');
+            document.getElementById('step-main').classList.remove('hidden');
+            alert('다음 세트를 시작합니다!');
+        }
+
+        function nextExercise() {
+            alert('다음 운동 종목으로 전환합니다.');
+        }
+
+        function saveInBody() {
+            alert('인바디 기록이 저장되었습니다.');
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === 'KR' ? 'EN' : 'KR';
+            document.getElementById('app-title').innerText = currentLang === 'KR' ? '⚡ 아이언 펄스 홈짐' : '⚡ IRON PULSE HOME GYM';
+        }
+    </script>
 </body>
 </html>
